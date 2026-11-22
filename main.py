@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 import requests
 
-# --- خادم ويب صغير لإبقاء البوت حياً على Render ---
+# --- خادم ويب لإبقاء البوت مستيقظاً على Render ---
 app = Flask(__name__)
 
 @app.route('/')
@@ -20,8 +20,8 @@ def keep_alive():
     t = Thread(target=run_web)
     t.start()
 
-# --- بيانات الربط ---
-DISCORD_TOKEN = "MTU3MTIwODc4OTU3MzUwOTE1MQ.G757I4.SvcoGLQ2yGOJ7546rwcnry-_0MUNGDrccnMJGc"
+# --- بيانات الربط الآمنة ---
+DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
 PANEL_URL = "https://tickhosting.com/api/client"
 API_KEY = "ptlc_s4rc93hrVy5jMAzA8UsgLZZGFuOHvPTJOmvtF5vZQMS"
 SERVER_ID = "7037c1fe"
@@ -76,5 +76,8 @@ async def send_command(ctx, *, command: str):
         await ctx.send("❌ تعذر إرسال الأمر (تأكد أن السيرفر يعمل حالياً).")
 
 if __name__ == "__main__":
-    keep_alive()
-    bot.run(DISCORD_TOKEN)
+    if not DISCORD_TOKEN:
+        print("خطأ: لم يتم العثور على DISCORD_TOKEN في Environment Variables!")
+    else:
+        keep_alive()
+        bot.run(DISCORD_TOKEN)
